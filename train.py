@@ -62,11 +62,10 @@ class sr3:
                 pred_SR = self.model(imgs)
                 loss = pred_SR.sum() / int(b * c * h * w)
 
-                total_loss = loss + 0.2 * roi_loss if (x_max > x_min and y_max > y_min and
+                total_loss = 0.4 * loss + 0.3 * (KLD_loss + recon_loss) + 0.3 * roi_loss if (x_max > x_min and y_max > y_min and
                                                         x_max <= w and x_min >= 0 and
                                                         y_max <= h and y_min >= 0) else loss
-                total_loss += KLD_loss + recon_loss  
-
+                
                 total_loss.backward()
                 self.optimizer.step()
                 train_loss += total_loss.item() * b
