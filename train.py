@@ -59,7 +59,7 @@ class sr3:
                 else:
                     roi_loss = 0
 
-                pred_SR = self.model(imgs)
+                pred_SR, KLD_loss, recon_loss = self.model(imgs)
                 loss = pred_SR.sum() / int(b * c * h * w)
 
                 total_loss = 0.4 * loss + 0.3 * (KLD_loss + recon_loss) + 0.3 * roi_loss if (x_max > x_min and y_max > y_min and
