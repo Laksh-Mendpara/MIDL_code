@@ -78,7 +78,7 @@ class sr3:
             b, c, h, w = test_imgs.shape
 
             with torch.no_grad():
-                val_loss = self.model(test_imgs)
+                val_loss, KLD_loss, recon_loss = self.model(test_imgs)
                 val_loss = val_loss.sum() / int(b * c * h * w)
 
                 high_resolution_generated = self.model(fixed_imgs1).detach().cpu().numpy()
