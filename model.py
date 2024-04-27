@@ -214,7 +214,7 @@ class UNet(nn.Module):
         recon_loss = F.mse_loss(BLVD_out, feats[-1])
 
         # Concatenate BLVD with U-net bottleneck output
-        #x = torch.cat((feats[-1], BLVD_out), dim=1)
+        x = torch.cat((feats[-1], BLVD_out), dim=1)
 
         for layer in self.mid:
             x = layer(x, t)
