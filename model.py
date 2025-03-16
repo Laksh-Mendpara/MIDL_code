@@ -1,3 +1,9 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from einops import rearrange
+
+
 class PositionalEncoding(nn.Module):
     def __init__(self, dim):
         super().__init__()
@@ -203,9 +209,12 @@ class UNet(nn.Module):
 
         # VAE branch
         BLVE_out = self.BLVE(feats[-1])
-        BLVD_out = self.BLVD(BLVE_out)
         BLVL_in = F.relu(self.BLVL(BLVE_out.view(BLVE_out.size(0), -1)))
         mu, logvar = BLVL_in.chunk(2, dim=1)
+        variance = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(variance)
+        z = mu + variance * eps
+        BLVD_out = self.BLVD(z)
 
         # KL Divergence Loss
         KLD_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
